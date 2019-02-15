@@ -1,25 +1,32 @@
 $(document).ready(function(){
-   $("#logoutBtn").click(function(){
-        $.ajax({
-            type: "GET",
-            url:  "http://localhost:8000/api/logout?token=" + getToken(),
-            dataType: "json",
-            success: function(data){
-                onLogout(data);
-            },
-            error: function(errMsg) {
-                alert(JSON.stringify(errMsg));
-            }
-        });
+    $("#logoutBtn").click(function(){
+        logout();
     }); 
+
+    getPlayerData();
 });
+
+function logout()
+{
+    $.ajax({
+        type: "GET",
+        url:  "http://localhost:8000/api/logout?token=" + getToken(),
+        dataType: "json",
+        success: function(data){
+            onLogout(data);
+        },
+        error: function(errMsg) {
+            alert(JSON.stringify(errMsg));
+        }
+    });
+}
 
 function onLogout(data)
 {
     if(!('error' in data))
     {
-        window.location = "file:///C:/Users/User/Desktop/UI/Login/login.html";
-        unauthenticate();
+        clearStorage();
+        window.location = "../Login/login.html";
     }
     else
     {
@@ -27,15 +34,20 @@ function onLogout(data)
     }
 }
 
-//alert(getToken());
-$.ajax({
-    type: "GET",
-    url:  "http://localhost:8000/api/player?token=" + getToken(),
-    dataType: "json",
-    success: function(data){
-        alert(JSON.stringify(data));
-    },
-    error: function(errMsg) {
-        alert(JSON.stringify(errMsg));
-    }
-});
+function getPlayerData()
+{
+    if(getAuthPlayer() != null)
+        return;
+    
+    $.ajax({
+        type: "GET",
+        url:  "http://localhost:8000/api/player?token=" + getToken(),
+        dataType: "json",
+        success: function(data){
+            setAuthPlayer(data);
+        },
+        error: function(errMsg) {
+            alert(JSON.stringify(errMsg));
+        }
+    });
+}

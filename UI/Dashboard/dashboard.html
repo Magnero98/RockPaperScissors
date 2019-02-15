@@ -19,6 +19,14 @@
 	<label>Hello</label>
 	<button id="logoutBtn">Logout</button>
 
+	<form id="createRoomForm" class="panel-heading form-horizontal" action="" method="POST">
+        <div class="input-group">
+            <span class="input-group-addon">Create Room</span>
+            <input type="text" class="form-control" name="roomTitle" placeholder="Room Title Here...">
+            <span class="input-group-addon" onclick="$('#createRoomForm').submit();">+</span>
+        </div>
+    </form>
+
 	<script type="text/javascript" src="dashboard.js"></script>
 </body>
 </html>
