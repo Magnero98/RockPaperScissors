@@ -1,4 +1,8 @@
+/* include '../sessionHelper.js' */
+/* include '../ajaxHelper.js' */
+
 $(document).ready(function(){
+
     redirectIfLoggedIn();
 
     $("#registerForm").on("submit", function(e){
@@ -6,35 +10,33 @@ $(document).ready(function(){
         e.preventDefault();
         if(!validateData()) return;
 
-        var redirectUrl = "http://localhost:8000/api/register";
-        if(isTokenSet())
-            redirectUrl += "?token=" + getToken();
-
-        $.ajax({
-            type: "POST",
-            url:  redirectUrl,
-            data: $('#registerForm').serialize(),
-            dataType: "json",
-            success: function(data){
-                onRegister(data);
-            },
-            error: function(errMsg) {
-                alert(JSON.stringify(errMsg));
-            }
-        });
+        register();
     }); 
+
 });
+
+function register()
+{
+    var url = "http://localhost:8000/api/register";
+    var data = $('#registerForm').serialize();
+    var callback = onRegister;
+
+    if(isTokenSet()) // sessionHelper.js
+        url += "?token=" + getToken(); // sessionHelper.js
+
+    sendPostMethod(url, data, callback); // ajaxHelper.js
+}
 
 function onRegister(data)
 {
     if(!("error" in data))
     {
-        authenticate(data['token']);
+        authenticate(data['token']); // sessionHelper.js
         window.location = "../Dashboard/dashboard.html";    
     }
     else
     {
-        setToken(data['token']);
+        setToken(data['token']); // sessionHelper.js
         alert(data['error']);
     }
 }
@@ -64,6 +66,6 @@ function validateData()
 
 function redirectIfLoggedIn()
 {
-    if(isAuthenticated())
-        window.location = "file:///C:/Users/User/Desktop/UI/Dashboard/dashboard.html";       
+    if(isAuthenticated()) // sessionHelper.js
+        window.location = "../Dashboard/dashboard.html";       
 }

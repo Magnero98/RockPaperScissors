@@ -1,31 +1,33 @@
+/* include '../sessionHelper.js' */
+/* include '../ajaxHelper.js' */
+/* include '../authenticatePlayer.js' */
+
 $(document).ready(function(){
+    
+    getPlayerData();
+
     $("#logoutBtn").click(function(){
         logout();
     }); 
 
-    getPlayerData();
 });
 
 function logout()
 {
-    $.ajax({
-        type: "GET",
-        url:  "http://localhost:8000/api/logout?token=" + getToken(),
-        dataType: "json",
-        success: function(data){
-            onLogout(data);
-        },
-        error: function(errMsg) {
-            alert(JSON.stringify(errMsg));
-        }
-    });
+    var url = "http://localhost:8000/api/logout";
+    var callback = onLogout;
+
+    if(isTokenSet()) // sessionHelper.js
+        url += "?token=" + getToken(); // sessionHelper.js
+
+    sendGetMethod(url, callback); // ajaxHelper.js
 }
 
 function onLogout(data)
 {
     if(!('error' in data))
     {
-        clearStorage();
+        clearStorage(); // sessionHelper.js
         window.location = "../Login/login.html";
     }
     else
@@ -36,18 +38,13 @@ function onLogout(data)
 
 function getPlayerData()
 {
-    if(getAuthPlayer() != null)
-        return;
+    if(getAuthPlayer() != null) return;
     
-    $.ajax({
-        type: "GET",
-        url:  "http://localhost:8000/api/player?token=" + getToken(),
-        dataType: "json",
-        success: function(data){
-            setAuthPlayer(data);
-        },
-        error: function(errMsg) {
-            alert(JSON.stringify(errMsg));
-        }
-    });
+    var url = "http://localhost:8000/api/player";
+    var callback = setAuthPlayer; // sessionHelper.js
+
+    if(isTokenSet()) // sessionHelper.js
+        url += "?token=" + getToken();
+
+    sendGetMethod(url, callback); // ajaxHelper.js
 }
