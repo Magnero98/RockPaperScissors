@@ -16,19 +16,14 @@ class PlayerController extends Controller
 
     public function login(Request $request) : string
     {
-//        if(isset($request->token))
-//            session()->setId($request->token);
-//        session()->start();
-        $success = $this->playerService->login($request->all());
+        $player = $this->playerService->login($request->all());
+
         $message = [
-            'player' => json_encode(authPlayer()->toDataModel()),
             'success' => 'login successful',
             'token' => session()->getId()
         ];
 
-        //var_dump(json_encode(authPlayer()->toArray()));
-
-        if(!$success)
+        if(!isset($player))
             $message = [
                 'error' => 'username and password does not match',
                 'token' => session()->getId()
@@ -51,9 +46,6 @@ class PlayerController extends Controller
 
     public function register(Request $request) : string
     {
-//        if($request->has('token'))
-//            session()->setId($request->token);
-
         $success = $this->playerService->register($request->all());
         $message = [
             'success' => 'register successful',
@@ -82,9 +74,6 @@ class PlayerController extends Controller
 
     public function getPlayer(Request $request)
     {
-        //session()->setId($request->token);
-        //session()->start();
-
-        return json_encode(authPlayer()->toDataModel());
+        return json_encode(authPlayer()->toArray());
     }
 }

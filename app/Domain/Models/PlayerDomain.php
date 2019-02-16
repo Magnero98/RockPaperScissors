@@ -26,7 +26,7 @@ class PlayerDomain extends DomainModel
         $this->username = $username;
         $this->points = $points;
         $this->gender = $gender;
-        $this->joinRoomService = new JoinRoomService();
+        $this->joinRoomService = new JoinRoomService($this);
     }
 
     protected $username;
@@ -54,14 +54,14 @@ class PlayerDomain extends DomainModel
         );
     }
 
-    public function toDataModel() : Player
+    public function toArray() : array
     {
-        $player = new Player();
-
-        $player->id = $this->id;
-        $player->username = $this->username;
-        $player->points = $this->points;
-        $player->gender = $this->gender;
+        $player = [
+            'id' => $this->id,
+            'username' => $this->username,
+            'points' => $this->points,
+            'gender' => $this->gender
+        ];
 
         return $player;
     }
