@@ -3,6 +3,18 @@ function getToken()
 	return localStorage.getItem('token');
 }
 
+function getAuthPlayer()
+{
+	var player = JSON.parse(localStorage.getItem('authPlayer'));
+	return player;
+}
+
+function setAuthPlayer(player)
+{
+	player = JSON.stringify(player);
+	localStorage.setItem('authPlayer', player);
+}
+
 function isTokenSet()
 {
 	return !(localStorage.getItem('token') === null);
@@ -22,12 +34,6 @@ function authenticate(newToken)
 {
 	localStorage.setItem('token', newToken);
 	localStorage.setItem('authenticated', true);
-}
-
-function unauthenticate()
-{
-	localStorage.removeItem('token');
-	localStorage.removeItem('authenticated');
 }
 
 function clearStorage()
