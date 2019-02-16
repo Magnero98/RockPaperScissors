@@ -1,47 +1,51 @@
+/* include '../sessionHelper.js' */
+/* include '../ajaxHelper.js' */
+
 $(document).ready(function(){
+
     redirectIfLoggedIn();
 
     $("#loginForm").on("submit", function(e){
         e.preventDefault();
-
-        var redirectUrl = "http://localhost:8000/api/login";
-        if(isTokenSet())
-            redirectUrl += "?token=" + getToken();
-
-        $.ajax({
-            type: "POST",
-            url:  redirectUrl,
-            data: $('#loginForm').serialize(),
-            dataType: "json",
-            success: function(data){
-                onLogin(data);
-            },
-            error: function(errMsg) {
-                alert(JSON.stringify(errMsg));
-            }
-        });
+        login();
     }); 
+
 });
+
+function login()
+{
+    var url = "http://localhost:8000/api/login";
+    var data = $('#loginForm').serialize();
+    var callback = onLogin;
+
+    if(isTokenSet()) // sessionHelper.js
+        url += "?token=" + getToken(); // sessionHelper.js
+
+    sendPostMethod(url, data, callback); // ajaxHelper.js
+}
 
 function onLogin(data)
 {
+    alert(data['player']);
     if(!("error" in data))
     {
-        authenticate(data['token']);
-
-        window.location = "file:///C:/Users/User/Desktop/UI/Dashboard/dashboard.html";    
+        //alert(JSON.stringify(data['player']));
+        authenticate(data['token']); // sessionHelper.js
+        window.location = "../Dashboard/dashboard.html";    
     }
     else
     {
-        setToken(data['token']);
+        setToken(data['token']); // sessionHelper.js
         alert(JSON.stringify(data['error']));
     }
 }
 
 function redirectIfLoggedIn()
 {
-    if(isAuthenticated())
-        window.location = "file:///C:/Users/User/Desktop/UI/Dashboard/dashboard.html";       
+    if(isAuthenticated()) // sessionHelper.js
+        window.location = "../Dashboard/dashboard.html";       
 }
+
+alert(getToken());
 
 //clearStorage();

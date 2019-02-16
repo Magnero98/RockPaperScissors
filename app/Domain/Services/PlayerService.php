@@ -10,8 +10,10 @@ namespace App\Domain\Services;
 
 
 use App\Domain\Models\PlayerDomain;
+use App\Infrastructure\Models\Player;
 use App\Infrastructure\Repositories\PlayerRepository;
 use Illuminate\Support\Facades\Cache;
+use function MongoDB\BSON\toJSON;
 
 class PlayerService
 {
@@ -22,7 +24,7 @@ class PlayerService
 
     protected $playerRepo;
 
-    public function login(array $data) : bool
+    public function login(array $data) : ?Player
     {
         $player = $this->playerRepo->loginUser(
             $data['username'],
@@ -35,7 +37,7 @@ class PlayerService
             $authPlayer->saveToSession();
         }
 
-        return isset($player);
+        return $player;
     }
 
     public function logout($sessionId) : bool
@@ -59,5 +61,10 @@ class PlayerService
     {
         $player = $this->playerRepo->findByUsername($username);
         return isset($player);
+    }
+
+    public function getAuthPlayer()
+    {
+        return authPlayer();
     }
 }

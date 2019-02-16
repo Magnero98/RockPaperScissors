@@ -31,6 +31,11 @@ class FirebaseRepository
     public function setReference($reference)	{ $this->reference = $this->database->getReference($reference); }
 
 
+    public function getSnapshot()
+    {
+        return $this->reference->getSnapshot();
+    }
+
     public function getValue()
     {
         return $this->reference->getValue();
