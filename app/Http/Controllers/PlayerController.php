@@ -16,7 +16,6 @@ class PlayerController extends Controller
 
     public function login(Request $request) : string
     {
-        //var_dump(json_encode(isset($request->token)));
         if(isset($request->token))
             session()->setId($request->token);
 
