@@ -23,10 +23,19 @@ class FirebaseController extends Controller
         return var_dump($firebase->setValue("Mimi"));
     }
 
-    public function getId()
+    public function getId(Request $request)
     {
-        $redis = app()->make('redis');
-        $redis->set("me", "his");
-        return $redis->get("me");
+        $roomId = Guid::generateId();
+
+        $firebase = new FirebaseRepository();
+
+        $firebase->setReference('RoomList/' . $roomId);
+        $roomItem = [
+            'title' => $request->roomTitle,
+            'totalPlayer' => 0
+        ];
+        $firebase->setValue($roomItem);
+
+        return $roomId;
     }
 }

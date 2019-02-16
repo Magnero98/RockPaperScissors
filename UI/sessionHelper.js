@@ -15,6 +15,16 @@ function setAuthPlayer(player)
 	localStorage.setItem('authPlayer', player);
 }
 
+function getRoomId()
+{
+	return localStorage.getItem('roomId');
+}
+
+function setRoomId(roomId)
+{
+	localStorage.setItem('roomId', roomId);
+}
+
 function isTokenSet()
 {
 	return !(localStorage.getItem('token') === null);
