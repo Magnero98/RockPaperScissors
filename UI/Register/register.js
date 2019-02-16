@@ -30,8 +30,7 @@ function onRegister(data)
     if(!("error" in data))
     {
         authenticate(data['token']);
-
-        window.location = "file:///C:/Users/User/Desktop/UI/Dashboard/dashboard.html";    
+        window.location = "../Dashboard/dashboard.html";    
     }
     else
     {

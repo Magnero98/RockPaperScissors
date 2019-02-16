@@ -16,7 +16,7 @@ function redirectIfAuthenticated()
 function onAuthenticated(data)
 {
 	if(('error' in data))
-		window.location = "file:///C:/Users/User/Desktop/UI/Login/login.html";
+		window.location = "../Login/login.html";
 }
 
 redirectIfAuthenticated();
