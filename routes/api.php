@@ -25,6 +25,7 @@ Route::middleware(['cors'])->group(function(){
         Route::post('/register', 'PlayerController@register');
         Route::get('/player', 'PlayerController@getPlayer');
 
+        Route::get('/rooms', 'RoomController@get15Rooms');
     });
 
     Route::get('/logout', 'PlayerController@logout');
