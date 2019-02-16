@@ -54,16 +54,16 @@ class PlayerDomain extends DomainModel
         );
     }
 
-    public function toArray() : array
+    public function toDataModel() : Player
     {
-        $array = [
-            'id' => $this->id,
-            'username' => $this->username,
-            'points' => $this->points,
-            'gender' => $this->gender
-        ];
+        $player = new Player();
 
-        return $array;
+        $player->id = $this->id;
+        $player->username = $this->username;
+        $player->points = $this->points;
+        $player->gender = $this->gender;
+
+        return $player;
     }
 
     public function saveToSession()

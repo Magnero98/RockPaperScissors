@@ -19,13 +19,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::middleware(['cors'])->group(function(){
 
-    Route::middleware(['session'])->group(function() {
+    Route::middleware(['session.reuse','session.start'])->group(function() {
 
         Route::post('/login', 'PlayerController@login');
         Route::post('/register', 'PlayerController@register');
-        Route::get('/player', 'PlayerController@getPlayer');
 
         Route::get('/rooms', 'RoomController@get15Rooms');
+        Route::get('/player', 'PlayerController@getPlayer');
+
     });
 
     Route::get('/logout', 'PlayerController@logout');

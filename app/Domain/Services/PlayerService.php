@@ -12,6 +12,7 @@ namespace App\Domain\Services;
 use App\Domain\Models\PlayerDomain;
 use App\Infrastructure\Repositories\PlayerRepository;
 use Illuminate\Support\Facades\Cache;
+use function MongoDB\BSON\toJSON;
 
 class PlayerService
 {
@@ -33,6 +34,7 @@ class PlayerService
         {
             $authPlayer = PlayerDomain::createFromDataModel($player);
             $authPlayer->saveToSession();
+            //echo json_encode(authPlayer());
         }
 
         return isset($player);
@@ -59,5 +61,10 @@ class PlayerService
     {
         $player = $this->playerRepo->findByUsername($username);
         return isset($player);
+    }
+
+    public function getAuthPlayer()
+    {
+        return authPlayer();
     }
 }

@@ -5,7 +5,7 @@
 $(document).ready(function(){
     
     getPlayerData();
-
+    //alert(getAuthPlayer().username);
     $("#logoutBtn").click(function(){
         logout();
     }); 
@@ -39,8 +39,11 @@ function onLogout(data)
 function getPlayerData()
 {
     if(getAuthPlayer() != null) return;
+
+    alert(getToken());
     
     var url = "http://localhost:8000/api/player";
+    //var data = null;
     var callback = setAuthPlayer; // sessionHelper.js
 
     if(isTokenSet()) // sessionHelper.js
