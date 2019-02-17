@@ -6,7 +6,7 @@ $(document).ready(function(){
     
     getPlayerData();
     getRoomList();
-    alert(getAuthPlayer().id);
+    //alert(getAuthPlayer().id);
     $("#logoutBtn").click(function(){
         logout();
     }); 
@@ -54,26 +54,26 @@ function createNewRoom()
 
 function onCreateRoom(data)
 {
-    alert(data['roomId']);
     setRoomId(data['roomId']); // sessionHelper.js
-    joinRoom(data['roomId']);
+    joinRoom(data['roomId'], true);
+
+    $('#roomList').empty();
+    getRoomList();
 }
 
-function joinRoom(roomId)
+function joinRoom(roomId, firstJoin = false)
 {
     var url = "http://localhost:8000/api/rooms/join?roomId=" + roomId;
-    var callback = onJoinRoom;
+    var callback = function(){};
 
+    if(firstJoin)
+        url += "&totalPlayer=0";
     if(isTokenSet()) // sessionHelper.js
         url += "&token=" + getToken(); // sessionHelper.js
 
     sendGetMethod(url, callback); // ajaxHelper.js
 }
 
-function onJoinRoom(data)
-{
-    alert(data['success']);
-}
 
 function logout()
 {

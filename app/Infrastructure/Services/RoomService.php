@@ -20,13 +20,13 @@ class RoomService
 
         $rooms = isset($index)
                 ? $firebase->getReference()
-                            ->orderByKey()
+                            ->orderByChild('created_at')
                             ->limitToFirst(15)
                             ->startAt($index)
                             ->getSnapshot()
                             ->getValue()
                 : $firebase->getReference()
-                            ->orderByKey()
+                            ->orderByChild('created_at')
                             ->limitToFirst(15)
                             ->getSnapshot()
                             ->getValue();
@@ -43,7 +43,8 @@ class RoomService
         $roomItem = [
             'title' => $roomTitle,
             'totalPlayer' => 0,
-            'totalReady' => 0
+            'totalReady' => 0,
+            'created_at' => date("-YmdHis",time())
         ];
         $firebase->setValue($roomItem);
 

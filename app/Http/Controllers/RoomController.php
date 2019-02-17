@@ -38,7 +38,8 @@ class RoomController extends Controller
     public function joinRoom(Request $request)
     {
         $success = authPlayer()->getJoinRoomService()
-                                ->join($request->roomId);
+                                ->join($request->roomId,
+                                       $request->totalPlayer);
         $message = [
             'success' => 'room successfully created'
         ];

@@ -24,10 +24,11 @@ class JoinRoomService
     public function getPlayerDomain()		{ return $this->playerDomain; }
     public function getRoomService()		{ return $this->roomService; }
 
-    public function join($roomId) : bool
+    public function join($roomId, $totalPlayer = null) : bool
     {
-        $totalPlayer = $this->getRoomService()
-            ->getTotalPlayerInRoom($roomId);
+        if(!isset($totalPlayer))
+            $totalPlayer = $this->getRoomService()
+                ->getTotalPlayerInRoom($roomId);
 
         $this->getRoomService()
             ->updateTotalPlayerInRoom($roomId, ++$totalPlayer);
