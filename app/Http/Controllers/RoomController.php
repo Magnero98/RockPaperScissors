@@ -87,4 +87,33 @@ class RoomController extends Controller
 
         return json_encode($message);
     }
+
+    public function getRoomPlayersAndReadyData(Request $request)
+    {
+        $roomAttrbs = $this->roomService
+            ->getRoomData($request->roomId);
+
+        $data = [
+            'players' => $roomAttrbs['players'],
+            'ready' => $roomAttrbs['ready']
+        ];
+
+        return json_encode($data);
+    }
+
+    public function setPlayerToReady(Request $request)
+    {
+        $success = $this->roomService
+                        ->setPlayerReadyInRoom($request->roomId);
+        $message = [
+            'success' => 'player is ready'
+        ];
+
+        if(!$success)
+            $message = [
+                'error' => 'failed to update player status'
+            ];
+
+        return json_encode($message);
+    }
 }

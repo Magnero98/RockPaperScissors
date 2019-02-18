@@ -7,6 +7,10 @@ $(document).ready(function(){
     renderPlayerData();
     searchingForOpponent();
 
+    $('#readyBtn').click(function(){
+    	setPlayerReady() // RoomState.js
+    });
+
 });
 
 function renderOpponentData(opponent)
@@ -29,4 +33,11 @@ function renderPlayerData()
 		$('#playerImg').attr('src', 'https://res.cloudinary.com/black-pearls/image/upload/v1550398551/RPS/Players/boy.svg');
 	else
 		$('#playerImg').attr('src', 'https://res.cloudinary.com/black-pearls/image/upload/v1550398551/RPS/Players/girl.svg');	
+}
+
+function renderOpponentReset()
+{
+	$('#opponentName').text("Opponent");
+	$('#opponentStatus').text("Not Ready");
+	$('#opponentImg').attr('src', 'https://res.cloudinary.com/black-pearls/image/upload/v1550398551/RPS/Players/unknown.svg');
 }

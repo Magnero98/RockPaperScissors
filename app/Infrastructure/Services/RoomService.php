@@ -61,7 +61,7 @@ class RoomService
         return $firebase->getSnapshot()->numChildren();
     }
 
-    public function setPlayerInRoom($roomId, $playerId)
+    public function setPlayerInRoom($roomId, $playerId) : bool
     {
         $firebase = new FirebaseRepository();
         $firebase->setReference('RoomList/'
@@ -70,9 +70,11 @@ class RoomService
                                 . $playerId);
 
         $firebase->setValue(true);
+
+        return true;
     }
 
-    public function removePlayerFromRoom($roomId, $playerId)
+    public function removePlayerFromRoom($roomId, $playerId) : bool
     {
         $firebase = new FirebaseRepository();
         $firebase->setReference('RoomList/'
@@ -81,26 +83,31 @@ class RoomService
             . $playerId);
 
         $firebase->getReference()->remove();
+        return true;
     }
 
-    public function setPlayerReadyInRoom($roomId, $playerId)
+    public function setPlayerReadyInRoom($roomId) : bool
     {
         $firebase = new FirebaseRepository();
         $firebase->setReference('RoomList/'
             . $roomId . '/'
             . 'ready/'
-            . $playerId);
+            . authPlayer()->getId());
 
         $firebase->setValue(true);
+
+        return true;
     }
 
-    public function updatePlayerShape($roomId, $playerId, $shape)
+    public function updatePlayerShape($roomId, $playerId, $shape) : bool
     {
         $firebase = new FirebaseRepository();
         $firebase->setReference('ActiveRooms/'
             . $roomId . '/'
             . $playerId);
         $firebase->setValue($shape);
+
+        return true;
     }
 
     public function getRoomOpponent($roomId)
@@ -120,12 +127,23 @@ class RoomService
         return $opponent->toArray();
     }
 
-    protected function determineOpponentId(array $playersId)
+    protected function determineOpponentId(array $playersId) : ?string
     {
         foreach ($playersId as $key => $value)
         {
             if($key != authPlayer()->getId())
                 return $key;
         }
+
+        return null;
     }
+
+    public function getRoomData($roomId)
+    {
+        $firebase = new FirebaseRepository();
+        $firebase->setReference('RoomList/'
+            . $roomId);
+        return $firebase->getValue();
+    }
+
 }

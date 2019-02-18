@@ -6,7 +6,7 @@ $(document).ready(function(){
     
     getPlayerData();
     getRoomList();
-    //alert(getAuthPlayer().id);
+    
     $("#logoutBtn").click(function(){
         logout();
     }); 

@@ -18,8 +18,10 @@ class FirebaseController extends Controller
     public function index()
     {
         $firebase = new FirebaseRepository();
-        $firebase->setReference('RoomList/31b4d70f-804c-4e2e-ad24-3341dbab9c56/players');
-        return $firebase->getValue();
+        $firebase->setReference('RoomList/7d66b569-8bec-4162-aea6-57651302122f');
+        $result = $firebase->getValue();
+
+        return $result['created_at'];
     }
 
     public function getId(Request $request)
