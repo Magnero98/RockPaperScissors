@@ -26,11 +26,13 @@ Route::middleware(['cors'])->group(function(){
 
         Route::post('/rooms/create', 'RoomController@createRoom');
         Route::get('/rooms/join', 'RoomController@joinRoom');
+        Route::get('/rooms/opponent', 'RoomController@getOpponent');
         Route::get('/player', 'PlayerController@getPlayer');
+        Route::get('/players/total', 'RoomController@getTotalPlayer');
+        Route::get('/rooms', 'RoomController@get15Rooms');
 
     });
 
-    Route::get('/rooms', 'RoomController@get15Rooms');
     Route::get('/logout', 'PlayerController@logout');
     Route::get('/authenticate', 'PlayerController@authenticatePlayer');
 

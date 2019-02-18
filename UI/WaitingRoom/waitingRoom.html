@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Waiting Room</title>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript" src="../sessionHelper.js"></script>
+	<script type="text/javascript" src="../ajaxHelper.js"></script>
+	<script type="text/javascript" src="../authenticatePlayer.js"></script>
+</head>
+<body>
+	<button id="exitBtn">Exit</button>
+	<label id="gameStatus">Searching For Opponent...</label>
+	<div class="row">
+		<div class="col-md-6">
+			<img id="playerImg" src="https://res.cloudinary.com/black-pearls/image/upload/v1550398551/RPS/Players/unknown.svg" width="50px" height="50px">
+			<label id="playerName">Player 1</label>
+			<p id="playerStatus">Not Ready</p>
+		</div>
+		<div class="col-md-6">
+			<img id="opponentImg" src="https://res.cloudinary.com/black-pearls/image/upload/v1550398551/RPS/Players/unknown.svg" width="50px" height="50px">
+			<label id="opponentName">Player 2</label>
+			<p id="opponentStatus">Not Ready</p>
+		</div>
+	</div>
+	<button id="readyBtn">Ready!</button>
+
+	<script type="text/javascript" src="waitingRoom.js"></script>
+	<script type="text/javascript" src="RoomState.js"></script>
+</body>
+</html>

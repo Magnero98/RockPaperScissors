@@ -9,7 +9,9 @@
 namespace App\Infrastructure\Services;
 
 use App\Domain\Models\Guid;
+use App\Domain\Models\PlayerDomain;
 use App\Infrastructure\Repositories\FirebaseRepository;
+use App\Infrastructure\Repositories\PlayerRepository;
 
 class RoomService
 {
@@ -42,8 +44,8 @@ class RoomService
 
         $roomItem = [
             'title' => $roomTitle,
-            'totalPlayer' => 0,
-            'totalReady' => 0,
+            'players' => true,
+            'ready' => true,
             'created_at' => date("-YmdHis",time())
         ];
         $firebase->setValue($roomItem);
@@ -54,22 +56,42 @@ class RoomService
     public function getTotalPlayerInRoom($roomId)
     {
         $firebase = new FirebaseRepository();
-        $firebase->setReference('RoomList/' . $roomId . '/totalPlayer');
+        $firebase->setReference('RoomList/' . $roomId . '/players');
 
-        return $firebase->getValue();
+        return $firebase->getSnapshot()->numChildren();
     }
 
-    public function updateTotalPlayerInRoom($roomId, $totalPlayer)
+    public function setPlayerInRoom($roomId, $playerId)
     {
         $firebase = new FirebaseRepository();
-        $firebase->setReference('RoomList/' . $roomId . '/totalPlayer');
+        $firebase->setReference('RoomList/'
+                                . $roomId . '/'
+                                . 'players/'
+                                . $playerId);
 
-        $firebase->setValue($totalPlayer);
+        $firebase->setValue(true);
     }
 
-    public function updateTotalReadyInRoom($roomId, $totalReady)
+    public function removePlayerFromRoom($roomId, $playerId)
     {
+        $firebase = new FirebaseRepository();
+        $firebase->setReference('RoomList/'
+            . $roomId . '/'
+            . 'players/'
+            . $playerId);
 
+        $firebase->getReference()->remove();
+    }
+
+    public function setPlayerReadyInRoom($roomId, $playerId)
+    {
+        $firebase = new FirebaseRepository();
+        $firebase->setReference('RoomList/'
+            . $roomId . '/'
+            . 'ready/'
+            . $playerId);
+
+        $firebase->setValue(true);
     }
 
     public function updatePlayerShape($roomId, $playerId, $shape)
@@ -79,5 +101,31 @@ class RoomService
             . $roomId . '/'
             . $playerId);
         $firebase->setValue($shape);
+    }
+
+    public function getRoomOpponent($roomId)
+    {
+        $firebase = new FirebaseRepository();
+        $firebase->setReference('RoomList/'
+            . $roomId . '/players');
+        $players = $firebase->getValue();
+
+        $opponentId = $this->determineOpponentId($players);
+
+        $playerRepo = new PlayerRepository();
+        $opponent = PlayerDomain::createFromDataModel(
+            $playerRepo->findById($opponentId)
+        );
+
+        return $opponent->toArray();
+    }
+
+    protected function determineOpponentId(array $playersId)
+    {
+        foreach ($playersId as $key => $value)
+        {
+            if($key != authPlayer()->getId())
+                return $key;
+        }
     }
 }

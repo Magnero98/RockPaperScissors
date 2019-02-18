@@ -15,6 +15,19 @@ function setAuthPlayer(player)
 	localStorage.setItem('authPlayer', player);
 }
 
+function getGameOpponent()
+{
+	var opponent = JSON.parse(localStorage.getItem('opponent'));
+	return opponent;
+}
+
+function setGameOpponent(opponent)
+{
+	opponent = JSON.stringify(opponent);
+	localStorage.setItem('opponent', opponent);
+}
+
+
 function getRoomId()
 {
 	return localStorage.getItem('roomId');

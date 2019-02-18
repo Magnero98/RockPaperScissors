@@ -26,7 +26,6 @@ function login()
 
 function onLogin(data)
 {
-    alert(data['player']);
     if(!("error" in data))
     {
         //alert(JSON.stringify(data['player']));
@@ -45,7 +44,5 @@ function redirectIfLoggedIn()
     if(isAuthenticated()) // sessionHelper.js
         window.location = "../Dashboard/dashboard.html";       
 }
-
-alert(getToken());
 
 //clearStorage();

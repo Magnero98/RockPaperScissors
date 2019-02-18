@@ -23,19 +23,23 @@ function getRoomList()
     var url = "http://localhost:8000/api/rooms";
     var callback = onGetRoomList;
 
+    if(isTokenSet()) // sessionHelper.js
+        url += "?token=" + getToken();
+
     sendGetMethod(url, callback); // ajaxHelper.js
 }
 
 function onGetRoomList(data)
 {
     var roomListScrollBox = $('#roomList');
+    roomListScrollBox.empty();
     var rooms = data['rooms'];
 
     $.each(rooms, function(key, value){
         var item = $('<li class="list-group-item">' + value.title + '</li>');
 
-        if(value.totalPlayer < 2)
-            item.append($('<button onclick="joinRoom(\'' + key + '\')">Join</button>'));
+        if(Object.keys(value.players).length < 2)
+            item.append($('<button onclick="joinRoom(\'' + key + '\', false)">Join</button>'));
         roomListScrollBox.append(item);
     });
 }
@@ -56,22 +60,26 @@ function onCreateRoom(data)
 {
     setRoomId(data['roomId']); // sessionHelper.js
     joinRoom(data['roomId'], true);
-
-    $('#roomList').empty();
     getRoomList();
 }
 
-function joinRoom(roomId, firstJoin = false)
+function joinRoom(roomId, firstJoin)
 {
-    var url = "http://localhost:8000/api/rooms/join?roomId=" + roomId;
-    var callback = function(){};
+    if(!firstJoin)
+        setRoomId(roomId); // sessionHelper.js
 
-    if(firstJoin)
-        url += "&totalPlayer=0";
+    var url = "http://localhost:8000/api/rooms/join?roomId=" + roomId;
+    var callback = onJoinRoom;
+
     if(isTokenSet()) // sessionHelper.js
         url += "&token=" + getToken(); // sessionHelper.js
 
     sendGetMethod(url, callback); // ajaxHelper.js
+}
+
+function onJoinRoom()
+{
+    window.location = "../WaitingRoom/waitingRoom.html";
 }
 
 

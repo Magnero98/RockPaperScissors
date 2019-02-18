@@ -18,9 +18,8 @@ class FirebaseController extends Controller
     public function index()
     {
         $firebase = new FirebaseRepository();
-        $firebase->setReference("Subjects/-LERI23i894DSU34dh43P/SubjectCategories/CategoriesName/0");
-
-        return var_dump($firebase->setValue("Mimi"));
+        $firebase->setReference('RoomList/31b4d70f-804c-4e2e-ad24-3341dbab9c56/players');
+        return $firebase->getValue();
     }
 
     public function getId(Request $request)
@@ -29,13 +28,7 @@ class FirebaseController extends Controller
 
         $firebase = new FirebaseRepository();
 
-        $firebase->setReference('RoomList/' . $roomId);
-        $roomItem = [
-            'title' => $request->roomTitle,
-            'totalPlayer' => 0
-        ];
-        $firebase->setValue($roomItem);
-
-        return $roomId;
+        $firebase->setReference('RoomList');
+        return $firebase->getValue();
     }
 }
