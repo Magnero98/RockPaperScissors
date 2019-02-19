@@ -10,11 +10,12 @@ namespace App\Domain\Models;
 
 
 use App\Infrastructure\Models\Player;
+use App\Infrastructure\Repositories\PlayerRepository;
 use App\Infrastructure\Services\JoinRoomService;
 use Illuminate\Filesystem\Cache;
 use Illuminate\Support\Facades\Cookie;
 
-class PlayerDomain extends DomainModel
+class PlayerDomain extends Entity
 {
     public function __construct(
         $id,
@@ -24,7 +25,7 @@ class PlayerDomain extends DomainModel
     {
         $this->id = $id;
         $this->username = $username;
-        $this->points = $points;
+        $this->points = new PointsDomain($points);
         $this->gender = $gender;
         $this->joinRoomService = new JoinRoomService($this);
     }
@@ -69,5 +70,11 @@ class PlayerDomain extends DomainModel
     public function saveToSession()
     {
         session(['authPlayer' => $this]);
+    }
+
+    public function saveToDatabase()
+    {
+        $playerRepo = new PlayerRepository();
+        $playerRepo->updatePlayer($this);
     }
 }

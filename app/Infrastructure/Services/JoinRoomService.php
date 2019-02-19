@@ -36,7 +36,7 @@ class JoinRoomService
             ->updatePlayerShape(
                 $roomId,
                 $this->getPlayerDomain()->getId(),
-                0
+                -1
             );
 
         return true;

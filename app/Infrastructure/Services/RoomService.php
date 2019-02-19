@@ -32,7 +32,7 @@ class RoomService
                             ->limitToFirst(15)
                             ->getSnapshot()
                             ->getValue();
-        return $rooms;
+        return isset($rooms) ? $rooms : [];
     }
 
     public function createNewRoom($roomTitle) : string
@@ -51,6 +51,18 @@ class RoomService
         $firebase->setValue($roomItem);
 
         return $roomId;
+    }
+
+    public function removeRoom($roomId) : bool
+    {
+        $firebase = new FirebaseRepository();
+        $firebase->setReference('RoomList/' . $roomId);
+        $firebase->getReference()->remove();
+
+        $firebase->setReference('ActiveRooms/' . $roomId);
+        $firebase->getReference()->remove();
+
+        return true;
     }
 
     public function getTotalPlayerInRoom($roomId)
@@ -76,13 +88,22 @@ class RoomService
 
     public function removePlayerFromRoom($roomId, $playerId) : bool
     {
+        if($this->getTotalPlayerInRoom($roomId) < 2)
+            return $this->removeRoom($roomId);
+
         $firebase = new FirebaseRepository();
         $firebase->setReference('RoomList/'
             . $roomId . '/'
             . 'players/'
             . $playerId);
-
         $firebase->getReference()->remove();
+
+        $firebase->setReference('RoomList/'
+            . $roomId . '/'
+            . 'ready/'
+            . $playerId);
+        $firebase->getReference()->remove();
+
         return true;
     }
 
@@ -93,6 +114,18 @@ class RoomService
             . $roomId . '/'
             . 'ready/'
             . authPlayer()->getId());
+
+        $firebase->setValue(true);
+
+        return true;
+    }
+
+    public function resetAllPlayerReadyInRoom($roomId) : bool
+    {
+        $firebase = new FirebaseRepository();
+        $firebase->setReference('RoomList/'
+            . $roomId . '/'
+            . 'ready');
 
         $firebase->setValue(true);
 

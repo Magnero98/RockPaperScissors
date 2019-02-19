@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Services\PlayerService;
 use App\Infrastructure\Services\RoomService;
 use Illuminate\Http\Request;
 
@@ -18,7 +19,7 @@ class RoomController extends Controller
     {
         $data = [
             'rooms' => $this->roomService
-                    ->getRoomsLimitTo15Data($request->roomId)
+                            ->getRoomsLimitTo15Data($request->roomId)
         ];
 
         return json_encode($data);
@@ -27,7 +28,7 @@ class RoomController extends Controller
     public function getOpponent(Request $request)
     {
         $opponent = $this->roomService
-                        ->getRoomOpponent($request->roomId);
+                         ->getRoomOpponent($request->roomId);
         $data = [
             'opponent' => $opponent
         ];
@@ -40,7 +41,7 @@ class RoomController extends Controller
     {
         $data = [
             'totalPlayer' => $this->roomService
-                ->getTotalPlayerInRoom($request->roomId)
+                                  ->getTotalPlayerInRoom($request->roomId)
         ];
 
         return json_encode($data);
@@ -50,7 +51,7 @@ class RoomController extends Controller
     {
         $data = [
             'roomId' => $this->roomService
-                    ->createNewRoom($request->roomTitle)
+                             ->createNewRoom($request->roomTitle)
         ];
 
         return json_encode($data);
@@ -59,14 +60,14 @@ class RoomController extends Controller
     public function joinRoom(Request $request)
     {
         $success = authPlayer()->getJoinRoomService()
-                                ->join($request->roomId);
+                               ->join($request->roomId);
         $message = [
-            'success' => 'room successfully created'
+            'success' => 'player Joined'
         ];
 
         if(!$success)
             $message = [
-                'error' => 'failed to create room'
+                'error' => 'failed to join'
             ];
 
         return json_encode($message);
@@ -74,15 +75,32 @@ class RoomController extends Controller
 
     public function leftRoom(Request $request)
     {
-        $success = authPlayer()->getJoinRoomService()
-            ->join($request->roomId);
+        $success = $this->roomService
+                        ->removePlayerFromRoom($request->roomId,
+                                                $request->playerId);
         $message = [
-            'success' => 'room successfully created'
+            'success' => 'player left successfully'
         ];
 
         if(!$success)
             $message = [
-                'error' => 'failed to create room'
+                'error' => 'failed to left room'
+            ];
+
+        return json_encode($message);
+    }
+
+    public function deleteRoom(Request $request)
+    {
+        $success = $this->roomService
+                        ->removeRoom($request->roomId);
+        $message = [
+            'success' => 'room removed successfully'
+        ];
+
+        if(!$success)
+            $message = [
+                'error' => 'failed to remove room'
             ];
 
         return json_encode($message);
@@ -95,7 +113,7 @@ class RoomController extends Controller
 
         $data = [
             'players' => $roomAttrbs['players'],
-            'ready' => $roomAttrbs['ready']
+            'ready' => isset($roomAttrbs['ready']) ? $roomAttrbs['ready'] : []
         ];
 
         return json_encode($data);
@@ -112,6 +130,22 @@ class RoomController extends Controller
         if(!$success)
             $message = [
                 'error' => 'failed to update player status'
+            ];
+
+        return json_encode($message);
+    }
+
+    public function resetAllPlayersReadyStatus(Request $request)
+    {
+        $success = $this->roomService
+            ->resetAllPlayerReadyInRoom($request->roomId);
+        $message = [
+            'success' => 'All player set to not ready'
+        ];
+
+        if(!$success)
+            $message = [
+                'error' => 'Failed reset ready status'
             ];
 
         return json_encode($message);

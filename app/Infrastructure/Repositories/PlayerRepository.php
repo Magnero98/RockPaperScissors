@@ -9,6 +9,7 @@
 namespace App\Infrastructure\Repositories;
 
 use App\Domain\Models\Guid;
+use App\Domain\Models\PlayerDomain;
 use App\Infrastructure\Models\Player;
 
 class PlayerRepository
@@ -48,5 +49,16 @@ class PlayerRepository
         $player->points = 0;
 
         return $player;
+    }
+
+    public function updatePlayer(PlayerDomain $model)
+    {
+        $player = $this->findById($model->getId());
+
+        $player->username = $model->getUsername();
+        $player->gender = $model->getGender();
+        $player->points = $model->getPoints()->getValue();
+
+        $player->save();
     }
 }
