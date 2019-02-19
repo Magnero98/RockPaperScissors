@@ -33,6 +33,12 @@ Route::middleware(['cors'])->group(function(){
         Route::get('/rooms', 'RoomController@get15Rooms');
         Route::get('/rooms/data', 'RoomController@getRoomPlayersAndReadyData');
         Route::get('/rooms/player/ready', 'RoomController@setPlayerToReady');
+        Route::get('/rooms/ready/reset', 'RoomController@resetAllPlayersReadyStatus');
+        Route::get('/rooms/left', 'RoomController@leftRoom');
+        Route::get('/rooms/delete', 'RoomController@deleteRoom');
+
+        Route::get('/games/set/shape', 'GameController@setPlayerShape');
+        Route::get('/games/winner', 'GameController@chooseTheGameWinner');
 
     });
 
