@@ -60,7 +60,7 @@ class PlayerDomain extends Entity
         $player = [
             'id' => $this->id,
             'username' => $this->username,
-            'points' => $this->points,
+            'points' => $this->points->getValue(),
             'gender' => $this->gender
         ];
 
