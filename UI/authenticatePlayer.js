@@ -1,16 +1,18 @@
+/* include 'sessionHelper.js'  */
+/* include 'logoutHelper.js'  */
+
 function redirectIfAuthenticated()
 {
-	$.ajax({
-        type:     "GET",
-        url:      "http://localhost:8000/api/authenticate?token=" + getToken(),
-        dataType: "json",
-        success: function(data){
-            onAuthenticated(data);
-        },
-        error: function(errMsg) {
-            alert(JSON.stringify(errMsg));
-        }
-    });
+    // var url = "http://localhost:8000/api/authenticate";
+    // var callback = onAuthenticated; 
+
+    // if(isTokenSet()) // sessionHelper.js
+    //     url += "?token=" + getToken();
+
+    if(!isAuthenticated() || !isTokenSet()) // sessionHelper.js
+        logout();
+
+            //sendGetMethod(url, callback);
 }
 
 function onAuthenticated(data)
@@ -18,5 +20,7 @@ function onAuthenticated(data)
 	if(('error' in data))
 		window.location = "../Login/login.html";
 }
+
+var isRedirected = false;
 
 redirectIfAuthenticated();

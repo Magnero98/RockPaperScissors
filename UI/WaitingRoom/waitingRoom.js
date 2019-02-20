@@ -5,12 +5,22 @@
 $(document).ready(function(){
     
     renderPlayerData();
-    searchingForOpponent();
+    //searchingForOpponent();
 
     $('#readyBtn').click(function(){
     	setPlayerReady() // RoomState.js
     });
 
+     $('#exitBtn').click(function(){
+    	isRedirected = true;
+    	exitGame();
+    });
+
+});
+
+$(window).on('beforeunload', function(){
+    if(!isRedirected)
+        unauthenticate(); // sessionHelper.js
 });
 
 function renderOpponentData(opponent)
@@ -26,13 +36,21 @@ function renderOpponentData(opponent)
 
 function renderPlayerData()
 {
-	$('#playerName').text(getAuthPlayer().username); // include '../sessionHelper.js' 
+	$('#playerName1').text(getAuthPlayer().username); // include '../sessionHelper.js' 
+	$('#playerName2').text(getAuthPlayer().username); // include '../sessionHelper.js' 
 	$('#playerStatus').text("Not Ready");
+	$('#playerPoints').text(getAuthPlayer().points); // include '../sessionHelper.js'
 
 	if(getAuthPlayer().gender == "Male") // include '../sessionHelper.js'
-		$('#playerImg').attr('src', 'https://res.cloudinary.com/black-pearls/image/upload/v1550398551/RPS/Players/boy.svg');
+	{
+		$('#playerImg1').attr('src', 'https://res.cloudinary.com/black-pearls/image/upload/v1550398551/RPS/Players/boy.svg');
+		$('#playerImg2').attr('src', 'https://res.cloudinary.com/black-pearls/image/upload/v1550398551/RPS/Players/boy.svg');
+	}
 	else
-		$('#playerImg').attr('src', 'https://res.cloudinary.com/black-pearls/image/upload/v1550398551/RPS/Players/girl.svg');	
+	{
+		$('#playerImg1').attr('src', 'https://res.cloudinary.com/black-pearls/image/upload/v1550398551/RPS/Players/girl.svg');	
+		$('#playerImg2').attr('src', 'https://res.cloudinary.com/black-pearls/image/upload/v1550398551/RPS/Players/girl.svg');	
+	}
 }
 
 function renderOpponentReset()

@@ -4,19 +4,25 @@
 var RoomStates = Object.freeze({"Idle":1, "Has2Player":2, "BothPlayerReady":3});
 var state = RoomStates.Idle;
 var isPlayerReady = false;
+var totalReady = 0;
+var checkReadyRequest = 0;
+
+$(window).on('beforeunload', function(){
+    if(!isRedirected)
+        exitGame();
+});
 
 /* ================================== Idle State ================================ */
 
 function searchingForOpponent()
 {
+	$('#gameStatus').text("Searching For Opponent . . .");
 	getTotalPlayerInRoom();
-	state = RoomStates.Has2Player;
-
-	checkBothPlayerReadiness();
 }
 
 function getTotalPlayerInRoom()
 {
+	console.log("searching");
 	var url = "http://localhost:8000/api/players/total?roomId=" + getRoomId(); // sessionHelper.js
     var callback = onGetTotalPlayer;
 
@@ -29,25 +35,31 @@ function getTotalPlayerInRoom()
 function onGetTotalPlayer(data)
 {
 	if(data['totalPlayer'] < 2)
-		setTimeout(getTotalPlayerInRoom, 1000);
+	{
+		getTotalPlayerInRoom();
+		return;
+	}
 	else
-		setTimeout(loadOpponentData, 1000);
+	{
+		loadOpponentData();
+	}
+
+	state = RoomStates.Has2Player;
+	checkBothPlayerReadiness();
 }
 
 function loadOpponentData()
 {
 	getOpponentData();
-	//alert(JSON.stringify(getGameOpponent()));
-	setTimeout(function(){
-		renderOpponentData(getGameOpponent());
-	}, 4500);
-	
 }
 
 function getOpponentData()
 {
 	if(getGameOpponent() != null)
+	{
+		renderOpponentData(getGameOpponent());
 		return;
+	}
 
 	var url = "http://localhost:8000/api/rooms/opponent?roomId=" + getRoomId();
     var callback = onGetOpponentData; 
@@ -61,12 +73,38 @@ function getOpponentData()
 function onGetOpponentData(data)
 {
 	setGameOpponent(data['opponent']);
+	renderOpponentData(getGameOpponent());
 }
 
 /* ================================== Has2Player State ================================ */
 
 function checkBothPlayerReadiness()
 {
+	$('#gameStatus').text("Waiting For Players To Ready . . .");
+
+	if(checkReadyRequest > 7)
+	{
+		checkReadyRequest = 0;
+		if(totalReady == 0)
+		{
+			alert('You Are Kicked From Room');
+			//kickOpponent();
+			exitGame();
+			return;
+		}
+		else if(totalReady == 1 && isPlayerReady)
+		{
+			kickOpponent();
+			return;
+		}
+		else if(totalReady == 1 && !isPlayerReady)
+		{
+			alert('You Are Kicked From Room');
+			exitGame();
+			return;
+		}
+	}
+
 	var url = "http://localhost:8000/api/rooms/data?roomId=" + getRoomId();
     var callback = onCheckBothPlayerReadiness;
 
@@ -78,19 +116,23 @@ function checkBothPlayerReadiness()
 
 function onCheckBothPlayerReadiness(data)
 {
+	checkReadyRequest += 1;
 	var players = data['players'];
 	var ready = data['ready'];
 
-	console.log(Object.keys(players).length);
-
 	if(Object.keys(players).length < 2)
 	{
-		//opponent left
+		onOpponentLeft();
 	}
 	else
 	{
-		if(Object.keys(ready).length > 1)
+		totalReady = Object.keys(ready).length;
+		if(totalReady > 1)
+		{
+			state = RoomStates.BothPlayerReady;
+			isRedirected = true;
 			window.location = "../GameStage/gameStage.html";
+		}
 
 		if(ready != true)
 		{
@@ -100,7 +142,7 @@ function onCheckBothPlayerReadiness(data)
 		    });
 		}	
 
-		setTimeout(checkBothPlayerReadiness, 2500);
+		checkBothPlayerReadiness();
 	}
 }
 
@@ -123,7 +165,53 @@ function onSetPlayerReady(data)
 
 /* ================================== Player Left Page ================================ */
 
+function onOpponentLeft()
+{
+	state = RoomStates.Idle;
+	renderOpponentReset();
+	unsetGameOpponent();
+	checkReadyRequest = 0;
+	searchingForOpponent();
+}
+
 function exitGame()
 {
+	var url = "http://localhost:8000/api/rooms/left?roomId=" + getRoomId()
+				+ "&playerId=" + getAuthPlayer().id;
+    var callback = onKickedFromRoom;
 
+    if(isTokenSet()) // sessionHelper.js
+        url += "&token=" + getToken();
+
+    sendGetMethod(url, callback);
+}
+
+function kickOpponent()
+{
+	var url = "http://localhost:8000/api/rooms/left?roomId=" + getRoomId()
+				+ "&playerId=" + getGameOpponent().id;
+    var callback = onOpponentLeft;
+
+    if(isTokenSet()) // sessionHelper.js
+        url += "&token=" + getToken();
+
+    sendGetMethod(url, callback);
+}
+
+function deleteRoom()
+{
+	var url = "http://localhost:8000/api/rooms/delete?roomId=" + getRoomId();
+    var callback = onKickedFromRoom;
+
+    if(isTokenSet()) // sessionHelper.js
+        url += "&token=" + getToken();
+
+    sendGetMethod(url, callback);
+}
+
+function onKickedFromRoom(data)
+{
+	unsetGameOpponent();
+	checkReadyRequest = 0;
+	window.location = "../Dashboard/dashboard.html";
 }

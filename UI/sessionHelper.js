@@ -27,6 +27,11 @@ function setGameOpponent(opponent)
 	localStorage.setItem('opponent', opponent);
 }
 
+function unsetGameOpponent()
+{
+	localStorage.removeItem('opponent');
+}
+
 
 function getRoomId()
 {
@@ -57,6 +62,11 @@ function authenticate(newToken)
 {
 	localStorage.setItem('token', newToken);
 	localStorage.setItem('authenticated', true);
+}
+
+function unauthenticate(newToken)
+{
+	localStorage.removeItem('authenticated');
 }
 
 function clearStorage()
