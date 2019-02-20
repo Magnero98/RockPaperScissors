@@ -6,9 +6,13 @@ $(document).ready(function(){
     
     getPlayerData();
     getRoomList();
-    alert(getAuthPlayer().id);
+    
     $("#logoutBtn").click(function(){
         logout();
+    });
+
+    $("#syncBtn").click(function(){
+        getRoomList();
     }); 
 
     $("#createRoomForm").on("submit", function(e){
@@ -18,10 +22,20 @@ $(document).ready(function(){
 
 });
 
+$(window).on('beforeunload', function(){
+    if(!isRedirected)
+        unauthenticate(); // sessionHelper.js
+});
+
 function getRoomList()
 {
+    $('.fa-sync-alt').toggleClass("fa-pulse");
+
     var url = "http://localhost:8000/api/rooms";
     var callback = onGetRoomList;
+
+    if(isTokenSet()) // sessionHelper.js
+        url += "?token=" + getToken();
 
     sendGetMethod(url, callback); // ajaxHelper.js
 }
@@ -29,15 +43,27 @@ function getRoomList()
 function onGetRoomList(data)
 {
     var roomListScrollBox = $('#roomList');
+    roomListScrollBox.empty();
     var rooms = data['rooms'];
 
     $.each(rooms, function(key, value){
-        var item = $('<li class="list-group-item">' + value.title + '</li>');
+        var elm = '<li class="list-group-item">' +
+                        '<label class="subtitle txt-inverse">' + value.title + '</label>' +
+                        '<div class="body pull-right">' +
+                            '<span class="pin">' + Object.keys(value.players).length + '/2</span>';
 
-        if(value.totalPlayer < 2)
-            item.append($('<button onclick="joinRoom(\'' + key + '\')">Join</button>'));
-        roomListScrollBox.append(item);
+                        if(Object.keys(value.players).length < 2)
+                            elm += '<button class="btn btn-xs btn-success" onclick="joinRoom(\'' + key + '\')">Join</button>';
+                        else
+                            elm +='<button class="btn btn-xs btn-warning">Full</button>';
+
+        elm +=          '</div>' +
+                '</li>';
+
+        roomListScrollBox.append($(elm));
     });
+
+    $('.fa-sync-alt').toggleClass("fa-pulse");
 }
 
 function createNewRoom()
@@ -54,13 +80,16 @@ function createNewRoom()
 
 function onCreateRoom(data)
 {
-    alert(data['roomId']);
     setRoomId(data['roomId']); // sessionHelper.js
-    joinRoom(data['roomId']);
+    joinRoom(data['roomId'], true);
+    getRoomList();
 }
 
-function joinRoom(roomId)
+function joinRoom(roomId, firstJoin)
 {
+    if(!firstJoin)
+        setRoomId(roomId); // sessionHelper.js
+
     var url = "http://localhost:8000/api/rooms/join?roomId=" + roomId;
     var callback = onJoinRoom;
 
@@ -70,33 +99,10 @@ function joinRoom(roomId)
     sendGetMethod(url, callback); // ajaxHelper.js
 }
 
-function onJoinRoom(data)
+function onJoinRoom()
 {
-    alert(data['success']);
-}
-
-function logout()
-{
-    var url = "http://localhost:8000/api/logout";
-    var callback = onLogout;
-
-    if(isTokenSet()) // sessionHelper.js
-        url += "?token=" + getToken(); // sessionHelper.js
-
-    sendGetMethod(url, callback); // ajaxHelper.js
-}
-
-function onLogout(data)
-{
-    if(!('error' in data))
-    {
-        clearStorage(); // sessionHelper.js
-        window.location = "../Login/login.html";
-    }
-    else
-    {
-        alert(data.error);
-    }
+    isRedirected = true;
+    window.location = "../WaitingRoom/waitingRoom.html";
 }
 
 function getPlayerData()
@@ -104,11 +110,24 @@ function getPlayerData()
     if(getAuthPlayer() != null) return;
     
     var url = "http://localhost:8000/api/player";
-    //var data = null;
-    var callback = setAuthPlayer; // sessionHelper.js
+    var callback = renderPlayerData; // sessionHelper.js
 
     if(isTokenSet()) // sessionHelper.js
         url += "?token=" + getToken();
 
     sendGetMethod(url, callback); // ajaxHelper.js
+}
+
+
+function renderPlayerData(data)
+{
+    setAuthPlayer(data);
+
+    $('#playerName').text(data.username); // include '../sessionHelper.js' 
+    $('#playerPoints').text(data.points); // include '../sessionHelper.js'
+
+    if(data.gender == "Male") // include '../sessionHelper.js'
+        $('#playerImg').attr('src', 'https://res.cloudinary.com/black-pearls/image/upload/v1550398551/RPS/Players/boy.svg');
+    else
+        $('#playerImg').attr('src', 'https://res.cloudinary.com/black-pearls/image/upload/v1550398551/RPS/Players/girl.svg');      
 }

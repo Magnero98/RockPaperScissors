@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Models\DomainModel;
+use App\Domain\Models\Entity;
 use App\Domain\Models\Guid;
 use App\Domain\Models\PlayerDomain;
 use App\Infrastructure\Models\Player;
 use App\Infrastructure\Repositories\FirebaseRepository;
 use App\Infrastructure\Repositories\PlayerRepository;
+use App\Infrastructure\Services\GameService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Kreait\Firebase\Factory;
@@ -17,10 +18,10 @@ class FirebaseController extends Controller
 {
     public function index()
     {
-        $firebase = new FirebaseRepository();
-        $firebase->setReference("Subjects/-LERI23i894DSU34dh43P/SubjectCategories/CategoriesName/0");
+        $gameService = new GameService();
+        $result = $gameService->chooseTheWinnerPlayer('e424945f-3389-409e-a1b5-bc8829d61b82');
 
-        return var_dump($firebase->setValue("Mimi"));
+        return $result;
     }
 
     public function getId(Request $request)
@@ -29,13 +30,7 @@ class FirebaseController extends Controller
 
         $firebase = new FirebaseRepository();
 
-        $firebase->setReference('RoomList/' . $roomId);
-        $roomItem = [
-            'title' => $request->roomTitle,
-            'totalPlayer' => 0
-        ];
-        $firebase->setValue($roomItem);
-
-        return $roomId;
+        $firebase->setReference('RoomList');
+        return $firebase->getValue();
     }
 }

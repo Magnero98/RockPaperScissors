@@ -9,7 +9,7 @@
 namespace App\Domain\Models;
 
 
-abstract class DomainModel
+abstract class Entity
 {
     protected $id;
 
@@ -17,11 +17,11 @@ abstract class DomainModel
 
     /**
      * Entity comparison with ID
-     * @param DomainModel
+     * @param Entity
      * @return bool
      */
 
-    public function equals(DomainModel $model) : bool
+    public function equals(Entity $model) : bool
     {
         if($model == null) return false;
         if($model->getId() != $this->getId()) return false;

@@ -26,32 +26,20 @@ class JoinRoomService
 
     public function join($roomId) : bool
     {
-        $totalPlayer = $this->getRoomService()
-            ->getTotalPlayerInRoom($roomId);
-
         $this->getRoomService()
-            ->updateTotalPlayerInRoom($roomId, ++$totalPlayer);
+            ->setPlayerInRoom(
+                $roomId,
+                $this->getPlayerDomain()->getId()
+            );
 
         $this->getRoomService()
             ->updatePlayerShape(
                 $roomId,
-                authPlayer()->getId(),
-                0
+                $this->getPlayerDomain()->getId(),
+                -1
             );
 
         return true;
-//
-//        $firebase = new FirebaseRepository();
-//        $firebase->setReference('RoomList/' . $roomId . '/totalPlayer');
-//
-//
-//
-//        $firebase->setValue($totalPlayer + 1);
-//
-//        $firebase->setReference('ActiveRooms/'
-//                                        . $roomId . '/'
-//                                        . $this->getPlayerDomain()->getId());
-//        $firebase->setValue(0);
     }
 
 

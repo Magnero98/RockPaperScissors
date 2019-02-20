@@ -1,9 +1,9 @@
 function sendPostMethod(redirectUrl, data, callback)
 {
     $.ajax({
-        type: "POST",
-        url:  redirectUrl,
-        data: data,
+        type:  "POST",
+        url:   redirectUrl,
+        data:  data,
         dataType: "json",
         success: function(data){
             callback(data);
@@ -17,8 +17,8 @@ function sendPostMethod(redirectUrl, data, callback)
 function sendGetMethod(redirectUrl, callback)
 {
     $.ajax({
-        type: "GET",
-        url:  redirectUrl,
+        type:  "GET",
+        url:   redirectUrl,
         dataType: "json",
         success: function(data){
             callback(data);

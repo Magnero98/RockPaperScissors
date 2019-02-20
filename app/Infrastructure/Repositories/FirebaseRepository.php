@@ -15,20 +15,23 @@ class FirebaseRepository
 {
     public function __construct()
     {
-        $serviceAccount = ServiceAccount::fromJsonFile(__DIR__ . '/Firebase/firebase_key.json');
-        $firebase = (new Factory)->withServiceAccount($serviceAccount)
-                                ->create();
+        if(!isset(self::$database))
+        {
+            $serviceAccount = ServiceAccount::fromJsonFile(__DIR__ . '/Firebase/firebase_key.json');
+            $firebase = (new Factory)->withServiceAccount($serviceAccount)
+                                    ->create();
 
-        $this->database = $firebase->getDatabase();
+            self::$database = $firebase->getDatabase();
+        }
     }
 
-    protected $database;
+    protected static $database;
     protected $reference;
 
-    public function getDatabase()	{ return $this->database; }
+    public function getDatabase()	{ return self::$database; }
     public function getReference()	{ return $this->reference; }
 
-    public function setReference($reference)	{ $this->reference = $this->database->getReference($reference); }
+    public function setReference($reference)	{ $this->reference = self::$database->getReference($reference); }
 
 
     public function getSnapshot()

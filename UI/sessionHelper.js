@@ -15,6 +15,24 @@ function setAuthPlayer(player)
 	localStorage.setItem('authPlayer', player);
 }
 
+function getGameOpponent()
+{
+	var opponent = JSON.parse(localStorage.getItem('opponent'));
+	return opponent;
+}
+
+function setGameOpponent(opponent)
+{
+	opponent = JSON.stringify(opponent);
+	localStorage.setItem('opponent', opponent);
+}
+
+function unsetGameOpponent()
+{
+	localStorage.removeItem('opponent');
+}
+
+
 function getRoomId()
 {
 	return localStorage.getItem('roomId');
@@ -44,6 +62,11 @@ function authenticate(newToken)
 {
 	localStorage.setItem('token', newToken);
 	localStorage.setItem('authenticated', true);
+}
+
+function unauthenticate(newToken)
+{
+	localStorage.removeItem('authenticated');
 }
 
 function clearStorage()
